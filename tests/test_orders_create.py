@@ -1,20 +1,30 @@
 import requests
 import allure
 import pytest
-import json
 from ..data import OrderData
-from ..urls import Urls
+from ..urls import URL_ORDERS_CREATE
 
+class TestOrderCreation:
+    @allure.title('Создание заказа с серым самокатом')
+    def test_create_order_grey(self):
+        response = requests.post(URL_ORDERS_CREATE, json=OrderData.order_data_grey_1)
+        assert response.status_code == 201
+        assert 'track' in response.json()
 
-class TestOrderCreate:
+    @allure.title('Создание заказа с черным самокатом')
+    def test_create_order_black(self):
+        response = requests.post(URL_ORDERS_CREATE, json=OrderData.order_data_black_2)
+        assert response.status_code == 201
+        assert 'track' in response.json()
 
-    @allure.title('Создание заказа с разными параметрами цвета')
-    @pytest.mark.parametrize('order_data', [
-        OrderData.order_data_grey_1, OrderData.order_data_black_2,
-        OrderData.order_data_two_colors_3, OrderData.order_data_no_colors_4
-    ])
-    def test_order_crete_color_parametrize_success(self, order_data):
-        order_data = json.dumps(order_data)
-        headers = {'Content-Type': 'application/json'}
-        response = requests.post(Urls.URL_orders_create, data=order_data, headers=headers, timeout=5)
-        assert response.status_code == 201 and 'track' in response.text
+    @allure.title('Создание заказа с двумя цветами')
+    def test_create_order_two_colors(self):
+        response = requests.post(URL_ORDERS_CREATE, json=OrderData.order_data_two_colors_3)
+        assert response.status_code == 201
+        assert 'track' in response.json()
+
+    @allure.title('Создание заказа без указания цвета')
+    def test_create_order_no_colors(self):
+        response = requests.post(URL_ORDERS_CREATE, json=OrderData.order_data_no_colors_4)
+        assert response.status_code == 201
+        assert 'track' in response.json()
