@@ -9,7 +9,6 @@ from ..helpers import create_random_login, create_random_password, create_random
 class TestCourierCreation:
     @allure.title('Успешное создание курьера')
     def test_create_courier_success(self):
-        # Генерируем уникальные данные для каждого теста
         courier_data = {
             'login': create_random_login(),
             'password': create_random_password(),
@@ -20,7 +19,6 @@ class TestCourierCreation:
         assert response.status_code == 201
         assert response.json() == {'ok': True}
 
-        # Удаляем созданного курьера
         login_response = requests.post(URL_COURIER_LOGIN, data={
             'login': courier_data['login'],
             'password': courier_data['password']
@@ -30,7 +28,6 @@ class TestCourierCreation:
 
     @allure.title('Создание дубликата курьера')
     def test_create_duplicate_courier(self):
-        # Используем данные из класса Data
         response = requests.post(URL_COURIER_CREATE, data=Data.valid_courier_data)
         assert response.status_code == 409
         assert response.json()['message'] == 'Этот логин уже используется. Попробуйте другой.'
@@ -40,3 +37,4 @@ class TestCourierCreation:
         response = requests.post(URL_COURIER_CREATE, data=Data.courier_data_without_name)
         assert response.status_code == 409
         assert response.json()['message'] == 'Этот логин уже используется. Попробуйте другой.'
+
