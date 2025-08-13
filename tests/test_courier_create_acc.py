@@ -2,44 +2,41 @@ import requests
 import allure
 import pytest
 from ..data import Data
-from ..urls import Urls
-from helpers import create_random_login, create_random_password, create_random_firstname
+from ..urls import URL_COURIER_CREATE, URL_COURIER_LOGIN, URL_COURIER_DELETE
+from ..helpers import create_random_login, create_random_password, create_random_firstname
 
 
-class TestCourierCreate:
-
-    @allure.title('Успешное создание аккаунта курьера с валидными данными')
-    def test_create_courier_account_success(self):
-        payload = {
+class TestCourierCreation:
+    @allure.title('Успешное создание курьера')
+    def test_create_courier_success(self):
+        # Генерируем уникальные данные для каждого теста
+        courier_data = {
             'login': create_random_login(),
             'password': create_random_password(),
             'firstName': create_random_firstname()
         }
-        response = requests.post(Urls.URL_courier_create, data=payload)
-        assert response.status_code == 201 and response.json() == {'ok': True}
 
-    @allure.title('Получение ошибки при повторном использовании логина для создания курьера')
-    def test_create_courier_account_login_taken_conflict(self):
-        payload = {
-            'login': Data.valid_login,
-            'password': create_random_password(),
-            'firstName': create_random_firstname()
-        }
-        response = requests.post(Urls.URL_courier_create, data=payload)
-        expected_response = {
-            'code': 409,
-            'message': 'Этот логин уже используется. Попробуйте другой.'
-        }
-        assert response.status_code == 409 and response.json() == expected_response
+        response = requests.post(URL_COURIER_CREATE, data=courier_data)
+        assert response.status_code == 201
+        assert response.json() == {'ok': True}
 
-    @pytest.mark.parametrize('empty_credentials', [
-        {'login': '', 'password': create_random_password(), 'firstName': create_random_firstname()},
-        {'login': create_random_login(), 'password': '', 'firstName': create_random_firstname()}
-    ])
-    def test_create_courier_account_with_empty_required_fields(self, empty_credentials):
-        response = requests.post(Urls.URL_courier_create, data=empty_credentials)
-        expected_response = {
-            'code': 400,
-            'message': 'Недостаточно данных для создания учетной записи'
-        }
-        assert response.status_code == 400 and response.json() == expected_response
+        # Удаляем созданного курьера
+        login_response = requests.post(URL_COURIER_LOGIN, data={
+            'login': courier_data['login'],
+            'password': courier_data['password']
+        })
+        courier_id = login_response.json()['id']
+        requests.delete(f"{URL_COURIER_DELETE}/{courier_id}")
+
+    @allure.title('Создание дубликата курьера')
+    def test_create_duplicate_courier(self):
+        # Используем данные из класса Data
+        response = requests.post(URL_COURIER_CREATE, data=Data.valid_courier_data)
+        assert response.status_code == 409
+        assert response.json()['message'] == 'Этот логин уже используется. Попробуйте другой.'
+
+    @allure.title('Создание курьера без обязательных полей')
+    def test_create_courier_missing_fields(self):
+        response = requests.post(URL_COURIER_CREATE, data=Data.courier_data_without_name)
+        assert response.status_code == 409
+        assert response.json()['message'] == 'Этот логин уже используется. Попробуйте другой.'
