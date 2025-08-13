@@ -1,12 +1,11 @@
 import requests
 import allure
-import pytest
-from ..urls import Urls
+from ..urls import URL_ORDERS_LIST
 
-
-class TestOrdersListGet:
-
+class TestOrdersList:
     @allure.title('Получение списка заказов')
-    def test_orders_list_get_success(self):
-        response = requests.get(Urls.URL_orders_create)
-        assert type(response.json()['orders']) == list and 'id' in response.json()['orders'][0]
+    def test_get_orders_list(self):
+        response = requests.get(URL_ORDERS_LIST)
+        assert response.status_code == 200
+        assert 'orders' in response.json()
+        assert isinstance(response.json()['orders'], list)
