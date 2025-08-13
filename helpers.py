@@ -1,19 +1,14 @@
-from faker import Faker
+import random
+import string
 
-fake = Faker()
-fakeRU = Faker(locale='ru_RU')
+def create_random_login(length=10):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for _ in range(length))
 
+def create_random_password(length=10):
+    chars = string.ascii_letters + string.digits
+    return ''.join(random.choice(chars) for _ in range(length))
 
-def create_random_login():
-    login = fake.text(max_nb_chars=7) + str(fake.random_int(0, 999))
-    return login
-
-
-def create_random_password():
-    password = fake.password(length=10, special_chars=True, digits=True, upper_case=True, lower_case=True)
-    return password
-
-
-def create_random_firstname():
-    first_name = fakeRU.first_name()
-    return first_name
+def create_random_firstname(length=8):
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for _ in range(length)).capitalize()
