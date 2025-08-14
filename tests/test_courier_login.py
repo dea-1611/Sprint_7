@@ -54,3 +54,4 @@ class TestCourierLogin:
         assert response.status_code == 400
         assert response.json()['message'] == ErrorMessages.NOT_ENOUGH_DATA_FOR_LOGIN
 
+
