@@ -1,11 +1,11 @@
-import requests
 import allure
-from ..urls import URL_ORDERS_LIST
+from Sprint_7.api import OrderAPI
 
 class TestOrdersList:
     @allure.title('Получение списка заказов')
     def test_get_orders_list(self):
-        response = requests.get(URL_ORDERS_LIST)
+        response = OrderAPI.get_orders_list()
         assert response.status_code == 200
         assert 'orders' in response.json()
         assert isinstance(response.json()['orders'], list)
+
