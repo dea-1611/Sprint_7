@@ -5,7 +5,7 @@ class Data:
     valid_courier_data = {'login': 'Max1994', 'password': 'qwerty', 'firstName': 'Max'}
     courier_data_without_name = {'login': 'Max1994', 'password': '1234'}
     courier_data_with_wrong_password = {'login': 'Max1994', 'password': '123456'}
-    courier_data_missing_fields = {'login': 'test_login'}  # Для теста с отсутствующими полями
+    courier_data_missing_fields = {'login': 'test_login'}
 
 class ErrorMessages:
     LOGIN_EXISTS = 'Этот логин уже используется. Попробуйте другой.'
@@ -69,3 +69,4 @@ class OrderData:
         'comment': 'Глупые смертные',
         'color': []
     }
+
