@@ -13,7 +13,6 @@ class TestCourierCreation:
             'firstName': create_random_firstname()
         }
         yield courier_data
-        # Финализатор
         login_response = CourierAPI.login_courier({
             'login': courier_data['login'],
             'password': courier_data['password']
@@ -42,4 +41,5 @@ class TestCourierCreation:
             assert response.json()['message'] == ErrorMessages.NOT_ENOUGH_DATA_FOR_CREATE
         else:
             assert response.json()['message'] == ErrorMessages.LOGIN_EXISTS
+
 
